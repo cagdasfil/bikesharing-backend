@@ -1,6 +1,22 @@
 {
   "routes": [
     {
+      "method": "POST",
+      "path": "/payments/withdrawMoney",
+      "handler": "Payments.withdrawMoney",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/payments/addMoney",
+      "handler": "Payments.addMoney",
+      "config": {
+        "policies": []
+      }
+    },
+    {
       "method": "GET",
       "path": "/payments",
       "handler": "Payments.find",
