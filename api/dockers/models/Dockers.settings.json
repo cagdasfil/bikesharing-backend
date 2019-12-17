@@ -17,11 +17,8 @@
       "type": "string"
     },
     "address": {
-      "type": "string"
-    },
-    "errorId": {
-      "unique": true,
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "coordinates": {
       "type": "json",

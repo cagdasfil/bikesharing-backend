@@ -6,27 +6,21 @@
     "description": ""
   },
   "options": {
-    "timestamps": [
-      "createdAt",
-      "updatedAt"
-    ]
+    "timestamps": true
   },
   "attributes": {
     "barcode": {
       "unique": true,
-      "type": "string"
-    },
-    "isAvailable": {
       "required": true,
-      "type": "boolean"
+      "type": "string"
     },
     "lastDockerId": {
       "required": true,
       "type": "string"
     },
-    "errorId": {
-      "unique": true,
-      "type": "string"
+    "isAvailable": {
+      "required": true,
+      "type": "boolean"
     }
   }
 }

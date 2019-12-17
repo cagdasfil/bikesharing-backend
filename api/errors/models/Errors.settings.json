@@ -25,6 +25,10 @@
       ],
       "enumDefault": "undefined",
       "type": "enumeration"
+    },
+    "objectId": {
+      "required": true,
+      "type": "string"
     }
   }
 }

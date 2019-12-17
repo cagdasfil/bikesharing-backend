@@ -6,10 +6,7 @@
     "description": ""
   },
   "options": {
-    "timestamps": [
-      "createdAt",
-      "updatedAt"
-    ]
+    "timestamps": true
   },
   "attributes": {
     "usageId": {
@@ -17,14 +14,18 @@
       "required": true,
       "type": "string"
     },
-    "isPaid": {
-      "required": true,
-      "type": "boolean"
-    },
     "totalPayment": {
       "type": "decimal",
+      "required": true
+    },
+    "totalPaid": {
+      "type": "decimal",
+      "required": true
+    },
+    "inDebt": {
+      "default": true,
       "required": true,
-      "default": "0"
+      "type": "boolean"
     }
   }
 }
