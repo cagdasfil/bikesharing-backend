@@ -1,0 +1,60 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/dockers/withBikes",
+      "handler": "Dockers.withBikes",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/dockers",
+      "handler": "Dockers.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/dockers/count",
+      "handler": "Dockers.count",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/dockers/:id",
+      "handler": "Dockers.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/dockers",
+      "handler": "Dockers.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/dockers/:id",
+      "handler": "Dockers.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/dockers/:id",
+      "handler": "Dockers.delete",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

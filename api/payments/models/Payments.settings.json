@@ -1,0 +1,30 @@
+{
+  "connection": "default",
+  "collectionName": "payments",
+  "info": {
+    "name": "payments",
+    "description": ""
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "usageId": {
+      "unique": true,
+      "required": true,
+      "type": "string"
+    },
+    "isPaid": {
+      "required": true,
+      "type": "boolean"
+    },
+    "totalPayment": {
+      "type": "decimal",
+      "required": true,
+      "default": "0"
+    }
+  }
+}

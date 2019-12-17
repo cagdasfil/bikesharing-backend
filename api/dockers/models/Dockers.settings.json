@@ -1,0 +1,31 @@
+{
+  "connection": "default",
+  "collectionName": "dockers",
+  "info": {
+    "name": "dockers",
+    "description": ""
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "dockerName": {
+      "required": true,
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "errorId": {
+      "unique": true,
+      "type": "string"
+    },
+    "coordinates": {
+      "type": "json",
+      "required": true
+    }
+  }
+}

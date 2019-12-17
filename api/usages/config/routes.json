@@ -1,0 +1,77 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/usages",
+      "handler": "Usages.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/usages/count",
+      "handler": "Usages.count",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/usages/:id",
+      "handler": "Usages.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/usages",
+      "handler": "Usages.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/usages/:id",
+      "handler": "Usages.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/usages/:id",
+      "handler": "Usages.delete",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/usages/startSession",
+      "handler": "Usages.startSession",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/usages/endSession",
+      "handler": "Usages.endSession",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/usages/openSession/:userId",
+      "handler": "Usages.openSession",
+      "config": {
+        "policies": []
+      }
+    }
+    
+  ]
+}

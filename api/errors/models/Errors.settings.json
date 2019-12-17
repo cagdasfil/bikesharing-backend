@@ -1,0 +1,30 @@
+{
+  "connection": "default",
+  "collectionName": "errors",
+  "info": {
+    "name": "errors",
+    "description": ""
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "description": {
+      "type": "string"
+    },
+    "objectType": {
+      "required": true,
+      "enum": [
+        "lock",
+        "bike",
+        "docker",
+        "undefined"
+      ],
+      "enumDefault": "undefined",
+      "type": "enumeration"
+    }
+  }
+}
