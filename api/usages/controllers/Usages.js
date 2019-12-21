@@ -5,34 +5,13 @@ module.exports = {
 
     startSession: async ctx => {
 
-        //Check the bike QR trying to tag
-        const bike = await Bikes.findOne({barcode : ctx.request.body.qrCode});
-        if(!bike){  
-            const res = {
-                status : 404,
-                errorCode : -101,
-                message : 'Invalid QR Code!'
-            }; 
-            return ctx.send(res);
-        }
-
-        //Check the bike availability
-        if(!bike.isAvailable){
-            const res = {
-                status : 400,
-                errorCode : -102,
-                message : 'The bike is already in use!'
-            }; 
-            return ctx.send(res);
-        }
-
         //Check the user has no bike currently
         const userOpenUsages = await Usages.findOne({userId : ctx.request.body.userId , isOpen : true});
         if(userOpenUsages){
             const res = {
                 status : 400,
-                errorCode : -103,
-                message : 'User has already a bike!'
+                errorCode : -101,
+                message : 'You have already a bike!'
             }; 
             return ctx.send(res);
         }
@@ -43,7 +22,7 @@ module.exports = {
         if(!user){
             const res = {
                 status : 404,
-                errorCode : -104,
+                errorCode : -102,
                 message : 'There is no such a user!'
             };
             return ctx.send(res);
@@ -58,8 +37,8 @@ module.exports = {
                     if(inDebt){
                         const res = {
                             status : 400,
-                            errorCode : -105,
-                            message : 'User has ' + (inDebt.totalPayment - inDebt.totalPaid) + ' tl debt!'
+                            errorCode : -103,
+                            message : 'You have ' + (inDebt.totalPayment - inDebt.totalPaid) + ' tl debt!'
                         }; 
                         return ctx.send(res);
                     }
@@ -67,8 +46,8 @@ module.exports = {
             }
             const res = {
                 status : 400,
-                errorCode : -106,
-                message : 'User balance under 10 tl! '
+                errorCode : -104,
+                message : 'Your balance is under 10 tl!'
             };
             return ctx.send(res);
        }
@@ -78,7 +57,7 @@ module.exports = {
             //Create usage fields
             const usage = {
                 userId : String(ctx.request.body.userId),
-                bikeId : bike._id,
+                bikeId : String(ctx.request.body.bikeId),
                 startDockerId : String(ctx.request.body.dockerId),
                 isOpen : true
             };
@@ -87,7 +66,7 @@ module.exports = {
             await strapi.query('usages').create(usage);
 
             //Update bike availability
-            await bike.updateOne({$set: {isAvailable : false}});
+            await Bikes.updateOne({_id : ctx.request.body.bikeId},{$set: {isAvailable : false, lastDockerId : ctx.request.body.dockerId }});
 
             //Return Response
             const res = {
@@ -102,7 +81,9 @@ module.exports = {
                 status : 304,
                 errorCode : -100,
                 message : err
-            }; 
+            };
+
+            await strapi.query('errors').create(res);
             return ctx.send(res);
         }
     },
@@ -116,7 +97,7 @@ module.exports = {
             const res = {
                 status : 404,
                 errorCode : -111,
-                message : 'The user has no any open session!'
+                message : 'You have no any open session!'
             };
             return ctx.send(res);
         }
@@ -133,9 +114,14 @@ module.exports = {
             const timeDifference = (finishedUsage.updatedAt - finishedUsage.createdAt) / (1000 * 60);
 
             var totalPayment = 0.00;
-            if(timeDifference > 5) totalPayment += 5.00;
-            if(timeDifference > 60) totalPayment += (timeDifference-60)*0.1;
-            if(timeDifference > 1440) totalPayment += (timeDifference-1440)*0.4;
+            //if(timeDifference > 5) totalPayment += 5.00;
+            //if(timeDifference > 60) totalPayment += (timeDifference-60)*0.1;
+            //if(timeDifference > 1440) totalPayment += (timeDifference-1440)*0.4;
+            
+            //To test in midterm
+            totalPayment += 10.00;
+            totalPayment += timeDifference*0.1;
+
 
             //Check user balance
             const user = await strapi.query('user','users-permissions').findOne({_id : ctx.request.body.userId});
@@ -175,7 +161,8 @@ module.exports = {
                 status : 304,
                 errorCode : -110,
                 message : err
-            }; 
+            };
+            await strapi.query('errors').create(res);
             return ctx.send(res);
         }
     },
@@ -188,7 +175,7 @@ module.exports = {
             const res = {
                 status : 404,
                 errorCode : -121,
-                message : 'The user has no any open session!'
+                message : 'You have no any open session!'
             };
             return ctx.send(res);
         }

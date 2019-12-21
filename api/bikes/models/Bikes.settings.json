@@ -21,6 +21,10 @@
     "isAvailable": {
       "required": true,
       "type": "boolean"
+    },
+    "isLocked": {
+      "required": true,
+      "type": "boolean"
     }
   }
 }

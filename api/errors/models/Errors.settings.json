@@ -6,29 +6,17 @@
     "description": ""
   },
   "options": {
-    "timestamps": [
-      "createdAt",
-      "updatedAt"
-    ]
+    "timestamps": true
   },
   "attributes": {
-    "description": {
-      "type": "string"
+    "status": {
+      "type": "integer"
     },
-    "objectType": {
-      "required": true,
-      "enum": [
-        "lock",
-        "bike",
-        "docker",
-        "undefined"
-      ],
-      "enumDefault": "undefined",
-      "type": "enumeration"
+    "errorCode": {
+      "type": "integer"
     },
-    "objectId": {
-      "required": true,
-      "type": "string"
+    "message": {
+      "type": "json"
     }
   }
 }

@@ -1,6 +1,22 @@
 {
   "routes": [
     {
+      "method": "POST",
+      "path": "/bikes/changeLockState",
+      "handler": "Bikes.changeLockState",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/bikes/checkAvailability/:qrCode",
+      "handler": "Bikes.checkAvailability",
+      "config": {
+        "policies": []
+      }
+    },
+    {
       "method": "GET",
       "path": "/bikes",
       "handler": "Bikes.find",

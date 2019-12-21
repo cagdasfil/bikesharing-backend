@@ -9,7 +9,7 @@ module.exports = {
     addMoney: async ctx => {
 
         const user = await strapi.query('user','users-permissions').findOne({_id : ctx.request.body.userId});
-
+        
         //Check user
         if(!user){
             const res = {
@@ -65,7 +65,7 @@ module.exports = {
                 withdrawedForDebt : withdrawedForDebt
             }
             const res = {
-                status : 200,
+                status : 200,                                                                                                                         
                 data : resData,
                 message : 'OK'
             };
@@ -76,7 +76,8 @@ module.exports = {
                 status : 304,
                 errorCode : -200,
                 message : err
-            }; 
+            };
+            await strapi.query('errors').create(res);
             return ctx.send(res);
         }
     },
@@ -130,7 +131,8 @@ module.exports = {
                 status : 304,
                 errorCode : -210,
                 message : err
-            }; 
+            };
+            await strapi.query('errors').create(res);
             return ctx.send(res);
         }
     },
