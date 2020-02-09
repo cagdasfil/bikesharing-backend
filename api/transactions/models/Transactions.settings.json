@@ -1,0 +1,34 @@
+{
+  "connection": "default",
+  "collectionName": "transactions",
+  "info": {
+    "name": "transactions",
+    "description": ""
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "userId": {
+      "required": true,
+      "type": "string"
+    },
+    "operationType": {
+      "required": true,
+      "enum": [
+        "add",
+        "withdraw",
+        "stoppage",
+        "usage"
+      ],
+      "type": "enumeration"
+    },
+    "details": {
+      "required": true,
+      "type": "json"
+    }
+  }
+}

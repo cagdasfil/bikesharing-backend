@@ -82,6 +82,10 @@
       "type": "float",
       "default": "0",
       "required": true
+    },
+    "inDebt": {
+      "required": true,
+      "type": "boolean"
     }
   }
 }

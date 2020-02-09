@@ -67,7 +67,5 @@ module.exports = {
             message : 'OK'
         };  
         return ctx.send(res);
-
-
     },
 };

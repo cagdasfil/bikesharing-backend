@@ -2,6 +2,14 @@
   "routes": [
     {
       "method": "GET",
+      "path": "/usages/closedSessions/:userId",
+      "handler": "Usages.closedSessions",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
       "path": "/usages",
       "handler": "Usages.find",
       "config": {
