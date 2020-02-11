@@ -29,42 +29,40 @@ module.exports = {
         }
 
         //Check user has debt
-        if(!user.balance){
-        
-            if(user.inDebt){
+        if(user.inDebt){
 
-                //Initiate return values
-                var totalDebt = 0;
-                var userPayments = null;
+            //Initiate return values
+            var totalDebt = 0;
+            var userPayments = null;
 
-                //Take user all usages
-                const userUsages = await Usages.find({userId : String(user._id) , isOpen : false}).sort({updatedAt : -1});
-                
-                if(userUsages[0]){
+            //Take user all usages
+            const userUsages = await Usages.find({userId : String(user._id) , isOpen : false}).sort({updatedAt : -1});
+            
+            if(userUsages[0]){
 
-                    //set totalDebt as totalFee of last usage
-                    totalDebt = userUsages[0].totalFee;
+                //set totalDebt as totalFee of last usage
+                totalDebt = userUsages[0].totalFee;
 
-                    //Find all payments belongs to last usage
-                    userPayments = await Transactions.find({userId : String(user._id) ,  
-                                                            $or: [ { operationType : 'stoppage' }, { operationType: 'usage' } ] , 
-                                                            "details.usageId" : String(userUsages[0]._id) });
-                        
-                    //Decrease totalDebt with payments before
-                    if(userPayments){
-                        for(var i = 0 ; i < userPayments.length ; i++){
-                            totalDebt -= userPayments[i].details.transactionAmount;
-                        }
+                //Find all payments belongs to last usage
+                userPayments = await Transactions.find({userId : String(user._id) ,  
+                                                        $or: [ { operationType : 'stoppage' }, { operationType: 'usage' } ] , 
+                                                        "details.usageId" : String(userUsages[0]._id) });
+                    
+                //Decrease totalDebt with payments before
+                if(userPayments){
+                    for(var i = 0 ; i < userPayments.length ; i++){
+                        totalDebt -= userPayments[i].details.transactionAmount;
                     }
                 }
-                const res = {
-                    status : 400,
-                    errorCode : -103,
-                    message : 'You have ' + totalDebt + ' tl debt!'
-                }; 
-                return ctx.send(res);
             }
+            const res = {
+                status : 400,
+                errorCode : -103,
+                message : 'You have ' + totalDebt + ' tl debt!'
+            }; 
+            return ctx.send(res);
         }
+        
 
         //Check user has min 10 tl
         if(user.balance < 10){
@@ -175,6 +173,7 @@ module.exports = {
             //Return Response
             const resData = {
                 user : userAfter,
+                totalPayment : totalPayment,
                 totalPaid : totalPaid
             }
 
@@ -226,14 +225,14 @@ module.exports = {
         if(!user){
             const res = {
                 status : 404,
-                errorCode : -221,
+                errorCode : -131,
                 message : 'There is no such a user!'
             };
             return ctx.send(res);
         }
 
         //Get closed usages of user
-        const usages =  await Usages.find({userId : String(ctx.params.userId), isOpen : false});
+        const usages =  await Usages.find({userId : String(ctx.params.userId), isOpen : false}).sort({createdAt : -1});
         if(usages){
             var resData = [];
             for(var i = 0 ; i < usages.length ; i++){

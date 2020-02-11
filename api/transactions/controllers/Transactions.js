@@ -189,7 +189,6 @@ module.exports = {
             };
             return ctx.send(res);
         }
-
         //Check user has a debt
         if(!user.inDebt){
             const res = {
@@ -237,5 +236,32 @@ module.exports = {
             message : 'OK'
         };
         return ctx.send(res); 
+    },
+    
+    withDetails : async ctx =>{
+
+        const user = await strapi.query('user','users-permissions').findOne({_id : ctx.params.userId});
+
+        //Check user
+        if(!user){
+            const res = {
+                status : 404,
+                errorCode : -231,
+                message : 'There is no such a user!'
+            };
+            return ctx.send(res);
+        }
+
+        //Take user all transactions
+        const userTransactions = await Transactions.find({userId : String(user._id)}).sort({createdAt : -1});
+        //Return Response
+        const res = {
+            status : 200,
+            data : userTransactions,
+            message : 'OK'
+        };
+        return ctx.send(res);
+        
+    
     },
 };

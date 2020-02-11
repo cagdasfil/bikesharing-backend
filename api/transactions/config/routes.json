@@ -2,6 +2,14 @@
   "routes": [
     {
       "method": "GET",
+      "path": "/transactions/withDetails/:userId",
+      "handler": "Transactions.withDetails",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
       "path": "/transactions/getDebt/:userId",
       "handler": "Transactions.getDebt",
       "config": {
