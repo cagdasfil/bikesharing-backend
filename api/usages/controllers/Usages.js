@@ -127,19 +127,20 @@ module.exports = {
         try{
 
             //Update bike availability
-            await Bikes.updateOne({_id : currentUsage.bikeId},{$set: {isAvailable : true, lastDockerId : String(ctx.request.body.dockerId) }});
-
-            //Find total payment
-            const finishedUsage = await Usages.findOne({_id : String(currentUsage._id)});
-            const timeDifference = (finishedUsage.updatedAt - finishedUsage.createdAt) / (1000 * 60);
-
-            var totalPayment = 15.00;
-            if(timeDifference > 5) totalPayment += 5.00;
-            if(timeDifference > 60) totalPayment += (timeDifference-60)*0.1;
-            if(timeDifference > 1440) totalPayment += (timeDifference-1440)*0.4;
+            await Bikes.updateOne({_id : currentUsage.bikeId},{$set: {isAvailable : true, lastDockerId : String(ctx.request.body.dockerId)}});
 
             //Update usage record
-            await currentUsage.updateOne({$set: {isOpen : false, endDockerId : String(ctx.request.body.dockerId), totalFee : totalPayment}}); 
+            const finishedUsage = await strapi.query('usages').update({_id : String(currentUsage._id)},{$set: {isOpen : false, endDockerId : String(ctx.request.body.dockerId)}});
+
+            //Find total payment
+            const timeDifference = (finishedUsage.updatedAt - finishedUsage.createdAt) / (1000 * 60);
+            var totalPayment = 15.00 + (timeDifference * 0.1);
+            //if(timeDifference > 5) totalPayment += 5.00;
+            //if(timeDifference > 60) totalPayment += (timeDifference-60)*0.1;
+            //if(timeDifference > 1440) totalPayment += (timeDifference-1440)*0.4;
+
+            //Update total payment
+            await currentUsage.updateOne({$set: {totalFee : totalPayment}});
 
             //Check user balance
             const user = await strapi.query('user','users-permissions').findOne({_id : String(ctx.request.body.userId)});
