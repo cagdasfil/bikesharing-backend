@@ -97,6 +97,7 @@ module.exports = {
 
             //Update user balance and inDebt fields
             await strapi.query('user','users-permissions').update({_id : ctx.request.body.userId},{$set: {balance : newBalance, inDebt : inDebt}});
+            
 
             //Create and Return Response
             const resData = {
@@ -148,10 +149,24 @@ module.exports = {
         //Find newBalance
         const newBalance = user.balance - ctx.request.body.amount;
 
+        //Create withhdraw transaction data
+        const withdrawTransaction = {
+            userId : String(user._id),
+            operationType : 'withdraw',
+            details : {
+                transactionAmount : withdrawedForDebt,
+                balanceBefore : user.balance + ctx.request.body.amount,
+                balanceAfter : newBalance
+            }
+        }
+
         try{
 
             //Update user balance
             await strapi.query('user','users-permissions').update({_id : ctx.request.body.userId},{$set: {balance : newBalance}});
+
+            //Insert withdraw Transaction
+            await strapi.query('transactions').create(withdrawTransaction);
 
             //Create and Return Response
             const resData = {
