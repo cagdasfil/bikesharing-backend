@@ -77,7 +77,7 @@ module.exports = {
                         userId : String(user._id),
                         operationType : 'stoppage',
                         details : {
-                            usageId : String(userUsages[0]._id),
+                            usage : userUsages[0],
                             transactionAmount : withdrawedForDebt,
                             balanceBefore : user.balance + ctx.request.body.amount,
                             balanceAfter : newBalance
@@ -154,8 +154,8 @@ module.exports = {
             userId : String(user._id),
             operationType : 'withdraw',
             details : {
-                transactionAmount : withdrawedForDebt,
-                balanceBefore : user.balance + ctx.request.body.amount,
+                transactionAmount : ctx.request.body.amount,
+                balanceBefore : user.balance,
                 balanceAfter : newBalance
             }
         }
@@ -269,6 +269,30 @@ module.exports = {
 
         //Take user all transactions
         const userTransactions = await Transactions.find({userId : String(user._id)}).sort({createdAt : -1});
+        if(userTransactions){
+            var resData = [];
+            for(var i =0 ; i < userTransactions.length ; i++){
+                var currentTransaction = userTransactions[i];
+                if(currentTransaction.operationType == 'stoppage' || currentTransaction.operationType == 'usage'){
+                    var currentUsage = userTransactions[i].details.usage;
+                    var startDocker = await Dockers.findOne({_id : String(currentUsage.startDockerId)});
+                    var endDocker = await Dockers.findOne({_id : String(currentUsage.endDockerId)});
+                    resData.push({
+                        currentTransaction,
+                        currentUsage : {
+                            currentUsage,
+                            startDocker,
+                            endDocker
+                        }
+                    });
+                }
+                else{
+                    resData.push({
+                        currentTransaction
+                    });
+                }
+            }
+        }
         //Return Response
         const res = {
             status : 200,

@@ -4,7 +4,7 @@
 module.exports = {
 
     startSession: async ctx => {
-
+        
         //Check the user has no bike currently
         const userOpenUsages = await Usages.findOne({userId : ctx.request.body.userId , isOpen : true});
         if(userOpenUsages){
@@ -157,11 +157,12 @@ module.exports = {
             const userAfter = await strapi.query('user','users-permissions').update({_id : String(ctx.request.body.userId)},{$set: {balance : newBalance, inDebt : inDebt}});
 
             //Create transaction fields
+            finishedUsage.totalFee = totalPayment;
             const usageTransaction = {
                 userId : String(user._id),
                 operationType : 'usage',
                 details : {
-                    usageId : String(currentUsage._id),
+                    usage : finishedUsage,
                     transactionAmount : totalPaid,
                     balanceBefore : user.balance,
                     balanceAfter : userAfter.balance
