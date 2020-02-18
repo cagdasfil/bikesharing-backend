@@ -4,7 +4,8 @@
 module.exports = {
 
     startSession: async ctx => {
-        
+
+      
         //Check the user has no bike currently
         const userOpenUsages = await Usages.findOne({userId : ctx.request.body.userId , isOpen : true});
         if(userOpenUsages){
@@ -74,6 +75,27 @@ module.exports = {
             return ctx.send(res);
        }
         
+       //Check user location
+       const dockers = await Dockers.find({"coordinates.geometry":{$geoIntersects:{$geometry:{"type" : "Point", "coordinates" : ctx.request.body.location}}}}); 
+       if(!dockers.length){
+           const res = {
+               status : 400,
+               errorCode : -105,
+               message : 'You are not on a docker area!'
+           };
+           return ctx.send(res);
+       }
+
+       //Extra check for last docker id for security
+       if(ctx.request.body.dockerId != dockers[0]._id){
+           const res = {
+               status : 400,
+               errorCode : -106,
+               message : 'Please select another bike!'
+           };
+           return ctx.send(res);
+       }
+
         //Create usage record
         try{
             //Create usage fields
@@ -88,7 +110,7 @@ module.exports = {
             const responseUsage = await strapi.query('usages').create(usage);
 
             //Update bike availability
-            await Bikes.updateOne({_id : ctx.request.body.bikeId},{$set: {isAvailable : false, lastDockerId : ctx.request.body.dockerId }});
+            await Bikes.updateOne({_id : ctx.request.body.bikeId},{$set: {isAvailable : false }});
 
             //Return Response
             const res = {
@@ -111,7 +133,7 @@ module.exports = {
     },
     
     endSession: async ctx => {
-        
+       
        
         //Check user has a bike currently
         const currentUsage = await Usages.findOne({userId : String(ctx.request.body.userId) , isOpen : true});
@@ -124,13 +146,24 @@ module.exports = {
             return ctx.send(res);
         }
 
+        //Check user location
+        const dockers = await Dockers.find({"coordinates.geometry":{$geoIntersects:{$geometry:{"type" : "Point", "coordinates" : ctx.request.body.location}}}});
+        if(!dockers.length){
+            const res = {
+                status : 400,
+                errorCode : -112,
+                message : 'You are not on a docker area!'
+            };
+            return ctx.send(res);
+        }
+
         try{
 
             //Update bike availability
-            await Bikes.updateOne({_id : currentUsage.bikeId},{$set: {isAvailable : true, lastDockerId : String(ctx.request.body.dockerId)}});
+            await Bikes.updateOne({_id : currentUsage.bikeId},{$set: {isAvailable : true, lastDockerId : String(dockers[0].id)}});
 
             //Update usage record
-            const finishedUsage = await strapi.query('usages').update({_id : String(currentUsage._id)},{$set: {isOpen : false, endDockerId : String(ctx.request.body.dockerId)}});
+            const finishedUsage = await strapi.query('usages').update({_id : String(currentUsage._id)},{$set: {isOpen : false, endDockerId :  String(dockers[0].id)}});
 
             //Find total payment
             const timeDifference = (finishedUsage.updatedAt - finishedUsage.createdAt) / (1000 * 60);
