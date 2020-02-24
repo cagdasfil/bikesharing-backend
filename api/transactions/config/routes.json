@@ -9,14 +9,6 @@
       }
     },
     {
-      "method": "GET",
-      "path": "/transactions/getDebt/:userId",
-      "handler": "Transactions.getDebt",
-      "config": {
-        "policies": []
-      }
-    },
-    {
       "method": "POST",
       "path": "/transactions/addMoney",
       "handler": "Transactions.addMoney",

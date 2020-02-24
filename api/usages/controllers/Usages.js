@@ -1,11 +1,12 @@
 'use strict';
+var PaymentServices = require('../../payments/services/Payments');
+var UsageServices = require('../services/Usages')
 
 
 module.exports = {
 
     startSession: async ctx => {
 
-      
         //Check the user has no bike currently
         const userOpenUsages = await Usages.findOne({userId : ctx.request.body.userId , isOpen : true});
         if(userOpenUsages){
@@ -17,9 +18,8 @@ module.exports = {
             return ctx.send(res);
         }
 
-        //Check the user balance
-        const user = await strapi.query('user','users-permissions').findOne({_id : ctx.request.body.userId});
         //Check user
+        const user = await strapi.query('user','users-permissions').findOne({_id : ctx.request.body.userId});
         if(!user){
             const res = {
                 status : 404,
@@ -29,33 +29,10 @@ module.exports = {
             return ctx.send(res);
         }
 
-        //Check user has debt
+        //Check user  debt
         if(user.inDebt){
-
-            //Initiate return values
-            var totalDebt = 0;
-            var userPayments = null;
-
-            //Take user all usages
-            const userUsages = await Usages.find({userId : String(user._id) , isOpen : false}).sort({updatedAt : -1});
-            
-            if(userUsages[0]){
-
-                //set totalDebt as totalFee of last usage
-                totalDebt = userUsages[0].totalFee;
-
-                //Find all payments belongs to last usage
-                userPayments = await Transactions.find({userId : String(user._id) ,  
-                                                        $or: [ { operationType : 'stoppage' }, { operationType: 'usage' } ] , 
-                                                        "details.usageId" : String(userUsages[0]._id) });
-                    
-                //Decrease totalDebt with payments before
-                if(userPayments){
-                    for(var i = 0 ; i < userPayments.length ; i++){
-                        totalDebt -= userPayments[i].details.transactionAmount;
-                    }
-                }
-            }
+            const lastPayment = await PaymentServices.findDebt(String(ctx.request.body.userId));
+            const totalDebt = lastPayment.totalDebt;
             const res = {
                 status : 400,
                 errorCode : -103,
@@ -64,7 +41,6 @@ module.exports = {
             return ctx.send(res);
         }
         
-
         //Check user has min 10 tl
         if(user.balance < 10){
             const res = {
@@ -96,7 +72,6 @@ module.exports = {
            return ctx.send(res);
        }
 
-        //Create usage record
         try{
             //Create usage fields
             const usage = {
@@ -134,7 +109,6 @@ module.exports = {
     
     endSession: async ctx => {
        
-       
         //Check user has a bike currently
         const currentUsage = await Usages.findOne({userId : String(ctx.request.body.userId) , isOpen : true});
         if(!currentUsage){
@@ -165,20 +139,19 @@ module.exports = {
             //Update usage record
             const finishedUsage = await strapi.query('usages').update({_id : String(currentUsage._id)},{$set: {isOpen : false, endDockerId :  String(dockers[0].id)}});
 
-            //Find total payment
+            //Find total usage time
             const timeDifference = (finishedUsage.updatedAt - finishedUsage.createdAt) / (1000 * 60);
-            var totalPayment = 15.00 + (timeDifference * 0.1);
-            //if(timeDifference > 5) totalPayment += 5.00;
-            //if(timeDifference > 60) totalPayment += (timeDifference-60)*0.1;
-            //if(timeDifference > 1440) totalPayment += (timeDifference-1440)*0.4;
+
+            //Find total Fee
+            const totalFee = await UsageServices.findTotalFee(timeDifference);
 
             //Update total payment
-            await currentUsage.updateOne({$set: {totalFee : totalPayment}});
+            await currentUsage.updateOne({$set: {totalFee : totalFee}});
 
             //Check user balance
             const user = await strapi.query('user','users-permissions').findOne({_id : String(ctx.request.body.userId)});
-            var newBalance = user.balance - totalPayment;
-            var totalPaid = totalPayment;
+            var newBalance = user.balance - totalFee;
+            var totalPaid = totalFee;
             var inDebt = false;
             if(newBalance < 0 ){
                 totalPaid = user.balance;
@@ -190,7 +163,7 @@ module.exports = {
             const userAfter = await strapi.query('user','users-permissions').update({_id : String(ctx.request.body.userId)},{$set: {balance : newBalance, inDebt : inDebt}});
 
             //Create transaction fields
-            finishedUsage.totalFee = totalPayment;
+            finishedUsage.totalFee = totalFee;
             const usageTransaction = {
                 userId : String(user._id),
                 operationType : 'usage',
@@ -205,10 +178,21 @@ module.exports = {
             //Insert to Transactions
             await strapi.query('transactions').create(usageTransaction);
 
+            //Create payment fields
+            const payment = {
+                usageId : String(finishedUsage._id),
+                totalFee : totalFee,
+                totalPaid : totalPaid,
+                userId : String(userAfter._id)
+            };
+
+            //Insert to Payments
+            await strapi.query('payments').create(payment);
+
             //Return Response
             const resData = {
                 user : userAfter,
-                totalPayment : totalPayment,
+                totalFee : totalFee,
                 totalPaid : totalPaid
             }
 
