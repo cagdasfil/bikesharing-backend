@@ -28,6 +28,9 @@ module.exports = {
         var inDebt = false;
         var withdrawedForDebt = 0;
 
+        var lastPayment = null;
+        var lastUsage = null;
+
         //create addMoney Transaction
         const addMoneyTransaction = {
             userId : String(user._id),
@@ -47,6 +50,7 @@ module.exports = {
             
             //Find userDebt
             const lastPayment = await PaymentServices.findDebt(String(ctx.request.body.userId));
+            const lastUsage = await Usages.findOne({_id : String(lastPayment.lastPayment.usageId)});
             withdrawedForDebt = lastPayment.totalDebt;
             newBalance = newBalance - withdrawedForDebt;
             
@@ -59,14 +63,15 @@ module.exports = {
             }
 
             //Set new totalPaid
-            totalPaid = lastPayment.payment.totalPaid + withdrawedForDebt;
+            console.log(lastPayment);
+            totalPaid = lastPayment.lastPayment.totalPaid + withdrawedForDebt;
 
             //Set stoppageTransaction
             stoppageTransaction = {
                 userId : String(user._id),
                 operationType : 'stoppage',
                 details : {
-                    usage : userUsages[0],
+                    usage : lastUsage,
                     transactionAmount : withdrawedForDebt,
                     balanceBefore : user.balance + ctx.request.body.amount,
                     balanceAfter : newBalance
@@ -84,7 +89,7 @@ module.exports = {
             if(user.inDebt) await strapi.query('transactions').create(stoppageTransaction);
 
             //Update totalPaid record if needed
-            if(lastPayment.payment) await lastPayment.payment.updateOne({$set:{totalPaid:totalPaid}});
+            if(lastPayment) await Payments.updateOne({$set:{totalPaid:totalPaid}});
 
             //Update user balance and inDebt fields
             await strapi.query('user','users-permissions').update({_id : ctx.request.body.userId},{$set: {balance : newBalance, inDebt : inDebt}});
