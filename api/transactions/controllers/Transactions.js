@@ -7,6 +7,7 @@ var PaymentServices = require('../../payments/services/Payments');
 
 module.exports = {
 
+    //TODO check inDebt =true but no last payment case also in startSession
 
     addMoney: async ctx => {
 
@@ -27,9 +28,7 @@ module.exports = {
         var totalPaid = 0;
         var inDebt = false;
         var withdrawedForDebt = 0;
-
         var lastPayment = null;
-        var lastUsage = null;
 
         //create addMoney Transaction
         const addMoneyTransaction = {
@@ -49,9 +48,8 @@ module.exports = {
         if(user.inDebt){
             
             //Find userDebt
-            const lastPayment = await PaymentServices.findDebt(String(ctx.request.body.userId));
-            const lastUsage = await Usages.findOne({_id : String(lastPayment.lastPayment.usageId)});
-            withdrawedForDebt = lastPayment.totalDebt;
+            const lastPayment = await PaymentServices.lastPayment(String(ctx.request.body.userId));
+            withdrawedForDebt = lastPayment.totalFee - lastPayment.totalPaid;
             newBalance = newBalance - withdrawedForDebt;
             
             //Set as having debt also after add money
@@ -63,7 +61,6 @@ module.exports = {
             }
 
             //Set new totalPaid
-            console.log(lastPayment);
             totalPaid = lastPayment.lastPayment.totalPaid + withdrawedForDebt;
 
             //Set stoppageTransaction
@@ -89,7 +86,7 @@ module.exports = {
             if(user.inDebt) await strapi.query('transactions').create(stoppageTransaction);
 
             //Update totalPaid record if needed
-            if(lastPayment) await Payments.updateOne({$set:{totalPaid:totalPaid}});
+            if(lastPayment) await lastPayment.updateOne({$set:{totalPaid:totalPaid}});
 
             //Update user balance and inDebt fields
             await strapi.query('user','users-permissions').update({_id : ctx.request.body.userId},{$set: {balance : newBalance, inDebt : inDebt}});
@@ -114,6 +111,7 @@ module.exports = {
                 errorCode : -200,
                 message : err
             }; 
+            await strapi.query('errors').create(res);
             return ctx.send(res);
         }
     },
@@ -181,13 +179,12 @@ module.exports = {
                 status : 304,
                 errorCode : -210,
                 message : err
-            }; 
+            };
+            await strapi.query('errors').create(res);
             return ctx.send(res);
         }
     },
 
-    
-    
     
     withDetails : async ctx =>{
 

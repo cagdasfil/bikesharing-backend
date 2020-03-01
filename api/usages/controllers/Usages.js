@@ -31,8 +31,8 @@ module.exports = {
 
         //Check user  debt
         if(user.inDebt){
-            const lastPayment = await PaymentServices.findDebt(String(ctx.request.body.userId));
-            const totalDebt = lastPayment.totalDebt;
+            const lastPayment = await PaymentServices.lastPayment(String(ctx.request.body.userId));
+            const totalDebt = lastPayment.totalFee - lastPayment.totalPaid;
             const res = {
                 status : 400,
                 errorCode : -103,
@@ -108,17 +108,6 @@ module.exports = {
     },
     
     endSession: async ctx => {
-       
-        //Check user has a bike currently
-        const currentUsage = await Usages.findOne({userId : String(ctx.request.body.userId) , isOpen : true});
-        if(!currentUsage){
-            const res = {
-                status : 404,
-                errorCode : -111,
-                message : 'You have no any open session!'
-            };
-            return ctx.send(res);
-        }
 
         //Check user location
         const dockers = await Dockers.find({"coordinates.geometry":{$geoIntersects:{$geometry:{"type" : "Point", "coordinates" : ctx.request.body.location}}}});
@@ -133,11 +122,19 @@ module.exports = {
 
         try{
 
-            //Update bike availability
-            await Bikes.updateOne({_id : currentUsage.bikeId},{$set: {isAvailable : true, lastDockerId : String(dockers[0].id)}});
-
             //Update usage record
-            const finishedUsage = await strapi.query('usages').update({_id : String(currentUsage._id)},{$set: {isOpen : false, endDockerId :  String(dockers[0].id)}});
+            var finishedUsage = await Usages.findOneAndUpdate({userId : String(ctx.request.body.userId) , isOpen : true},{$set: {isOpen : false, endDockerId :  String(dockers[0].id)}},{returnOriginal : false});
+            if(!finishedUsage){
+                const res = {
+                    status : 404,
+                    errorCode : -111,
+                    message : 'You have no any open session!'
+                };
+                return ctx.send(res);
+            }
+
+            //Update bike availability 
+            await Bikes.updateOne({_id : currentUsage.bikeId},{$set: {isAvailable : true, lastDockerId : String(dockers[0].id)}});
 
             //Find total usage time
             const timeDifference = (finishedUsage.updatedAt - finishedUsage.createdAt) / (1000 * 60);
@@ -145,25 +142,19 @@ module.exports = {
             //Find total Fee
             const totalFee = await UsageServices.findTotalFee(timeDifference);
 
-            //Update total payment
-            await currentUsage.updateOne({$set: {totalFee : totalFee}});
-
             //Check user balance
             const user = await strapi.query('user','users-permissions').findOne({_id : String(ctx.request.body.userId)});
             var newBalance = user.balance - totalFee;
             var totalPaid = totalFee;
             var inDebt = false;
+
             if(newBalance < 0 ){
                 totalPaid = user.balance;
                 newBalance = 0;
                 inDebt = true;
             }
 
-            //Update user balance and inDebt field
-            const userAfter = await strapi.query('user','users-permissions').update({_id : String(ctx.request.body.userId)},{$set: {balance : newBalance, inDebt : inDebt}});
-
             //Create transaction fields
-            finishedUsage.totalFee = totalFee;
             const usageTransaction = {
                 userId : String(user._id),
                 operationType : 'usage',
@@ -175,19 +166,22 @@ module.exports = {
                 }
             };
 
-            //Insert to Transactions
+            //Insert transaction record
             await strapi.query('transactions').create(usageTransaction);
 
             //Create payment fields
             const payment = {
-                usageId : String(finishedUsage._id),
-                totalFee : totalFee,
+                userId : String(ctx.request.body.userId),
+                usage : finishedUsage,
                 totalPaid : totalPaid,
-                userId : String(userAfter._id)
-            };
+                totalFee : totalFee
+            }
 
-            //Insert to Payments
+            //Insert payment record
             await strapi.query('payments').create(payment);
+
+            //Update user balance and inDebt field
+            const userAfter = await strapi.query('user','users-permissions').update({_id : String(ctx.request.body.userId)},{$set: {balance : newBalance, inDebt : inDebt}});
 
             //Return Response
             const resData = {

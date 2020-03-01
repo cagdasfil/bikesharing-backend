@@ -12,11 +12,6 @@
     ]
   },
   "attributes": {
-    "usageId": {
-      "unique": true,
-      "required": true,
-      "type": "string"
-    },
     "totalFee": {
       "type": "float",
       "required": true,
@@ -30,6 +25,11 @@
     "userId": {
       "required": true,
       "type": "string"
+    },
+    "usage": {
+      "unique": true,
+      "required": true,
+      "type": "json"
     }
   }
 }

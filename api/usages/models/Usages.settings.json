@@ -31,11 +31,6 @@
       "required": true,
       "default": true,
       "type": "boolean"
-    },
-    "totalFee": {
-      "type": "float",
-      "required": true,
-      "default": "0"
     }
   }
 }

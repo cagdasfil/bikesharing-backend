@@ -31,12 +31,13 @@ module.exports = {
             return ctx.send(res);
         }
 
-        const lastPayment = await PaymentServices.findDebt(ctx.params.userId);
+        const lastPayment = await PaymentServices.lastPayment(ctx.params.userId);
+        const totalDebt = lastPayment.totalFee - lastPayment.totalPaid;
 
         //Prepare Response Data
         const resData = {
             user,
-            totalDebt : lastPayment.totalDebt
+            totalDebt : totalDebt
         };
  
         //Return Response

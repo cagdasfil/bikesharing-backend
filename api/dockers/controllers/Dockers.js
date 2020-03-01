@@ -1,4 +1,5 @@
 'use strict';
+var Turf = require('@turf/turf');
 
 module.exports = {
 
@@ -10,9 +11,12 @@ module.exports = {
         var dockersWithBikes = [];
         for(var i = 0 ; i< dockerNumber; i++){
             var currentDocker = dockers[i];
+            const polygon  = Turf.polygon(currentDocker.coordinates.geometry.coordinates);
+            const center = Turf.centroid(polygon);
             const currentAvails = await strapi.query('bikes').find({lastDockerId : currentDocker.id, isAvailable : true});
             dockersWithBikes.push ({
                 currentDocker,
+                center,
                 availableBikeNumber: currentAvails.length
             });
         }

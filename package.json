@@ -11,6 +11,7 @@
   },
   "devDependencies": {},
   "dependencies": {
+    "@turf/turf": "^5.1.6",
     "knex": "latest",
     "mongodb": "^3.3.3",
     "mongoose": "^5.7.9",
