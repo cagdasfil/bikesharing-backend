@@ -48,7 +48,7 @@ module.exports = {
         if(user.inDebt){
             
             //Find userDebt
-            const lastPayment = await PaymentServices.lastPayment(String(ctx.request.body.userId));
+            lastPayment = await PaymentServices.lastPayment(String(ctx.request.body.userId));
             withdrawedForDebt = lastPayment.totalFee - lastPayment.totalPaid;
             newBalance = newBalance - withdrawedForDebt;
             
@@ -61,14 +61,14 @@ module.exports = {
             }
 
             //Set new totalPaid
-            totalPaid = lastPayment.lastPayment.totalPaid + withdrawedForDebt;
+            totalPaid = lastPayment.totalPaid + withdrawedForDebt;
 
             //Set stoppageTransaction
             stoppageTransaction = {
                 userId : String(user._id),
                 operationType : 'stoppage',
                 details : {
-                    usage : lastUsage,
+                    usage : lastPayment.usage,
                     transactionAmount : withdrawedForDebt,
                     balanceBefore : user.balance + ctx.request.body.amount,
                     balanceAfter : newBalance

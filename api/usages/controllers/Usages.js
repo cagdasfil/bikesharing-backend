@@ -134,11 +134,11 @@ module.exports = {
             }
 
             //Update bike availability 
-            await Bikes.updateOne({_id : currentUsage.bikeId},{$set: {isAvailable : true, lastDockerId : String(dockers[0].id)}});
+            await Bikes.updateOne({_id : finishedUsage.bikeId},{$set: {isAvailable : true, lastDockerId : String(dockers[0].id)}});
 
             //Find total usage time
             const timeDifference = (finishedUsage.updatedAt - finishedUsage.createdAt) / (1000 * 60);
-
+            
             //Find total Fee
             const totalFee = await UsageServices.findTotalFee(timeDifference);
 
@@ -153,6 +153,9 @@ module.exports = {
                 newBalance = 0;
                 inDebt = true;
             }
+
+            //Update user balance and inDebt field
+            const userAfter = await strapi.query('user','users-permissions').update({_id : String(ctx.request.body.userId)},{$set: {balance : newBalance, inDebt : inDebt}});
 
             //Create transaction fields
             const usageTransaction = {
@@ -179,9 +182,6 @@ module.exports = {
 
             //Insert payment record
             await strapi.query('payments').create(payment);
-
-            //Update user balance and inDebt field
-            const userAfter = await strapi.query('user','users-permissions').update({_id : String(ctx.request.body.userId)},{$set: {balance : newBalance, inDebt : inDebt}});
 
             //Return Response
             const resData = {
