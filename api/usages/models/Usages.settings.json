@@ -1,0 +1,36 @@
+{
+  "connection": "default",
+  "collectionName": "usages",
+  "info": {
+    "name": "usages",
+    "description": ""
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "userId": {
+      "required": true,
+      "type": "string"
+    },
+    "bikeId": {
+      "required": true,
+      "type": "string"
+    },
+    "startDockerId": {
+      "required": true,
+      "type": "string"
+    },
+    "endDockerId": {
+      "type": "string"
+    },
+    "isOpen": {
+      "required": true,
+      "default": true,
+      "type": "boolean"
+    }
+  }
+}

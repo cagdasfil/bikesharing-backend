@@ -1,0 +1,76 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/transactions/withDetails/:userId",
+      "handler": "Transactions.withDetails",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/transactions/addMoney",
+      "handler": "Transactions.addMoney",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/transactions/withdrawMoney",
+      "handler": "Transactions.withdrawMoney",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/transactions",
+      "handler": "Transactions.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/transactions/count",
+      "handler": "Transactions.count",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/transactions/:id",
+      "handler": "Transactions.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/transactions",
+      "handler": "Transactions.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/transactions/:id",
+      "handler": "Transactions.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/transactions/:id",
+      "handler": "Transactions.delete",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

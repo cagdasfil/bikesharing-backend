@@ -1,5 +1,5 @@
 {
-  "name": "bikesharing",
+  "name": "my-project",
   "private": true,
   "version": "0.1.0",
   "description": "A Strapi application",
@@ -11,24 +11,32 @@
   },
   "devDependencies": {},
   "dependencies": {
-    "strapi": "3.0.0-beta.17.8",
-    "strapi-admin": "3.0.0-beta.17.8",
-    "strapi-utils": "3.0.0-beta.17.8",
-    "strapi-plugin-content-type-builder": "3.0.0-beta.17.8",
-    "strapi-plugin-content-manager": "3.0.0-beta.17.8",
-    "strapi-plugin-users-permissions": "3.0.0-beta.17.8",
-    "strapi-plugin-email": "3.0.0-beta.17.8",
-    "strapi-plugin-upload": "3.0.0-beta.17.8",
-    "strapi-hook-bookshelf": "3.0.0-beta.17.8",
-    "strapi-hook-knex": "3.0.0-beta.17.8",
+    "@turf/turf": "^5.1.6",
     "knex": "latest",
-    "sqlite3": "latest"
+    "mongodb": "^3.3.3",
+    "mongoose": "^5.7.9",
+    "node-geocoder": "^3.25.0",
+    "strapi": "3.0.0-beta.17.5",
+    "strapi-admin": "3.0.0-beta.17.5",
+    "strapi-bookshelf": "^3.0.0-alpha.12.7.1",
+    "strapi-hook-bookshelf": "3.0.0-beta.17.5",
+    "strapi-hook-knex": "3.0.0-beta.17.5",
+    "strapi-hook-mongoose": "^3.0.0-beta.17.6",
+    "strapi-knex": "^3.0.0-alpha.12.7.1",
+    "strapi-plugin-content-manager": "3.0.0-beta.17.5",
+    "strapi-plugin-content-type-builder": "3.0.0-beta.17.5",
+    "strapi-plugin-email": "3.0.0-beta.17.5",
+    "strapi-plugin-graphql": "^3.0.0-beta.17.5",
+    "strapi-plugin-upload": "3.0.0-beta.17.5",
+    "strapi-plugin-users-permissions": "3.0.0-beta.17.5",
+    "strapi-utils": "3.0.0-beta.17.5",
+    "turf-inside": "^3.0.12"
   },
   "author": {
     "name": "A Strapi developer"
   },
   "strapi": {
-    "uuid": "4a5e77b3-91d4-45d7-8de4-a81b098c0295"
+    "uuid": "504a3141-fab7-4ff0-b74a-f589e1fc91dc"
   },
   "engines": {
     "node": ">=10.0.0",

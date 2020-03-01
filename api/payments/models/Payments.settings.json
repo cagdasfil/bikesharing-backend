@@ -1,0 +1,35 @@
+{
+  "connection": "default",
+  "collectionName": "payments",
+  "info": {
+    "name": "payments",
+    "description": ""
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "totalFee": {
+      "type": "float",
+      "required": true,
+      "default": "0"
+    },
+    "totalPaid": {
+      "type": "float",
+      "default": "0",
+      "required": true
+    },
+    "userId": {
+      "required": true,
+      "type": "string"
+    },
+    "usage": {
+      "unique": true,
+      "required": true,
+      "type": "json"
+    }
+  }
+}

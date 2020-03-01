@@ -1,0 +1,22 @@
+{
+  "connection": "default",
+  "collectionName": "errors",
+  "info": {
+    "name": "errors",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "status": {
+      "type": "integer"
+    },
+    "errorCode": {
+      "type": "integer"
+    },
+    "message": {
+      "type": "json"
+    }
+  }
+}

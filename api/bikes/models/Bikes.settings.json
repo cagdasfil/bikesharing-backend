@@ -1,0 +1,30 @@
+{
+  "connection": "default",
+  "collectionName": "bikes",
+  "info": {
+    "name": "bikes",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "barcode": {
+      "unique": true,
+      "required": true,
+      "type": "string"
+    },
+    "lastDockerId": {
+      "required": true,
+      "type": "string"
+    },
+    "isAvailable": {
+      "required": true,
+      "type": "boolean"
+    },
+    "isLocked": {
+      "required": true,
+      "type": "boolean"
+    }
+  }
+}

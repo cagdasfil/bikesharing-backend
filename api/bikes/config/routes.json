@@ -1,0 +1,68 @@
+{
+  "routes": [
+    {
+      "method": "POST",
+      "path": "/bikes/changeLockState",
+      "handler": "Bikes.changeLockState",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/bikes/checkAvailability/:qrCode",
+      "handler": "Bikes.checkAvailability",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/bikes",
+      "handler": "Bikes.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/bikes/count",
+      "handler": "Bikes.count",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/bikes/:id",
+      "handler": "Bikes.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/bikes",
+      "handler": "Bikes.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/bikes/:id",
+      "handler": "Bikes.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/bikes/:id",
+      "handler": "Bikes.delete",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}
