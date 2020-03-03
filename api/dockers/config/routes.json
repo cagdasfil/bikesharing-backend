@@ -2,6 +2,14 @@
   "routes": [
     {
       "method": "GET",
+      "path": "/dockers/closestZone/:location",
+      "handler": "Dockers.closestZone",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
       "path": "/dockers/withBikes",
       "handler": "Dockers.withBikes",
       "config": {
