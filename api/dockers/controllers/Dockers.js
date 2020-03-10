@@ -6,7 +6,7 @@ module.exports = {
     closestZone : async ctx => {
 
         var location = JSON.parse(ctx.params.location);
-        location = [location.longitude, location.latidude];
+        location = [location.longitude, location.latitude];
         var targetPoint = Turf.point(location);
 
         var centers = [];
@@ -20,7 +20,7 @@ module.exports = {
         }
         centers = Turf.featureCollection(centers);
         var nearest = Turf.nearestPoint(targetPoint,centers);
-        ctx.send(nearest);
+        return ctx.send(nearest);
     },
 
     withBikes : async ctx => {
@@ -28,7 +28,7 @@ module.exports = {
         //Find Dockers and it's bikes that are available currently
         const dockers = await strapi.query('dockers').find();
         var dockersWithBikes = [];
-        for(var i = 0 ; i< dockerNumber; i++){
+        for(var i = 0 ; i< dockers.length; i++){
             var currentDocker = dockers[i];
             const polygon  = Turf.polygon(currentDocker.coordinates.geometry.coordinates);
             const center = Turf.centroid(polygon);

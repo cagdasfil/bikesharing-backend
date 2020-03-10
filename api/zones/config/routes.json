@@ -1,0 +1,84 @@
+{
+  "routes": [
+    {
+      "method": "POST",
+      "path": "/zones/updatePolygon",
+      "handler": "Zones.updatePolygon",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/zones/insertZone",
+      "handler": "Zones.insertZone",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/zones/closestZone/:location",
+      "handler": "Zones.closestZone",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/zones/withBikes",
+      "handler": "Zones.withBikes",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/zones",
+      "handler": "Zones.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/zones/count",
+      "handler": "Zones.count",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/zones/:id",
+      "handler": "Zones.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/zones",
+      "handler": "Zones.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/zones/:id",
+      "handler": "Zones.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/zones/:id",
+      "handler": "Zones.delete",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

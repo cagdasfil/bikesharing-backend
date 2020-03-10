@@ -1,0 +1,26 @@
+{
+  "connection": "default",
+  "collectionName": "zones",
+  "info": {
+    "name": "zones",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "name": {
+      "required": true,
+      "type": "string"
+    },
+    "address": {
+      "required": true,
+      "type": "string"
+    },
+    "polygon": {
+      "unique": true,
+      "required": true,
+      "type": "json"
+    }
+  }
+}
