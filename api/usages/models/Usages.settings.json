@@ -14,22 +14,24 @@
   "attributes": {
     "userId": {
       "required": true,
+      "default": "",
       "type": "string"
     },
     "bikeId": {
       "required": true,
+      "default": "",
       "type": "string"
     },
-    "startDockerId": {
+    "startZoneId": {
       "required": true,
       "type": "string"
     },
-    "endDockerId": {
+    "endZoneId": {
       "type": "string"
     },
     "isOpen": {
-      "required": true,
       "default": true,
+      "required": true,
       "type": "boolean"
     }
   }

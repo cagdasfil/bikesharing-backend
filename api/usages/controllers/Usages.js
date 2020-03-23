@@ -49,22 +49,22 @@ module.exports = {
                 message : 'Your balance is under 10 tl!'
             };
             return ctx.send(res);
-       }
+        }
         
-       //Check user location
-       const dockers = await Dockers.find({"coordinates.geometry":{$geoIntersects:{$geometry:{"type" : "Point", "coordinates" : ctx.request.body.location}}}}); 
-       if(!dockers.length){
+        //Check user location
+        const zones = await Zones.find({"polygon.geometry":{$geoIntersects:{$geometry:{"type" : "Point", "coordinates" : ctx.request.body.location}}}}); 
+        if(!zones.length){
            const res = {
                status : 400,
                errorCode : -105,
-               message : 'You are not on a docker area!'
+               message : 'You are not on a renting area!'
            };
            return ctx.send(res);
-       }
+        }
 
-       //Extra check for last docker id for security
-       if(ctx.request.body.dockerId != dockers[0]._id){
-           const res = {
+        //Extra check for last zone id for security
+        if(ctx.request.body.lastZoneId != zones[0]._id){
+            const res = {
                status : 400,
                errorCode : -106,
                message : 'Please select another bike!'
@@ -72,15 +72,15 @@ module.exports = {
            return ctx.send(res);
        }
 
-        try{
-            //Create usage fields
-            const usage = {
-                userId : String(ctx.request.body.userId),
-                bikeId : String(ctx.request.body.bikeId),
-                startDockerId : String(ctx.request.body.dockerId),
-                isOpen : true
-            };
+       //Create usage fields
+        const usage = {
+            userId : String(ctx.request.body.userId),
+            bikeId : String(ctx.request.body.bikeId),
+            startZoneId : String(ctx.request.body.lastZoneId),
+            isOpen : true
+        };
 
+        try{
             //Insert to Usages
             const responseUsage = await strapi.query('usages').create(usage);
 
@@ -110,20 +110,22 @@ module.exports = {
     endSession: async ctx => {
 
         //Check user location
-        const dockers = await Dockers.find({"coordinates.geometry":{$geoIntersects:{$geometry:{"type" : "Point", "coordinates" : ctx.request.body.location}}}});
-        if(!dockers.length){
+        const zones = await Zones.find({"polygon.geometry":{$geoIntersects:{$geometry:{"type" : "Point", "coordinates" : ctx.request.body.location}}}});
+        if(!zones.length){
             const res = {
                 status : 400,
                 errorCode : -112,
-                message : 'You are not on a docker area!'
+                message : 'You are not on a returning area!'
             };
             return ctx.send(res);
         }
 
+        console.log(zones[0]);
+        
         try{
 
             //Update usage record
-            var finishedUsage = await Usages.findOneAndUpdate({userId : String(ctx.request.body.userId) , isOpen : true},{$set: {isOpen : false, endDockerId :  String(dockers[0].id)}},{returnOriginal : false});
+            var finishedUsage = await Usages.findOneAndUpdate({userId : String(ctx.request.body.userId) , isOpen : true},{$set: {isOpen : false, endZoneId :  String(zones[0].id)}},{returnOriginal : false});
             if(!finishedUsage){
                 const res = {
                     status : 404,
@@ -133,8 +135,10 @@ module.exports = {
                 return ctx.send(res);
             }
 
+            console.log(finishedUsage);
+
             //Update bike availability 
-            await Bikes.updateOne({_id : finishedUsage.bikeId},{$set: {isAvailable : true, lastDockerId : String(dockers[0].id)}});
+            await Bikes.updateOne({_id : finishedUsage.bikeId},{$set: {isAvailable : true, lastZoneId : String(zones[0].id)}});
 
             //Find total usage time
             const timeDifference = (finishedUsage.updatedAt - finishedUsage.createdAt) / (1000 * 60);
@@ -249,13 +253,13 @@ module.exports = {
         if(usages){
             var resData = [];
             for(var i = 0 ; i < usages.length ; i++){
-                var startDocker = await Dockers.findOne({_id : String(usages[i].startDockerId)});
-                var endDocker = await Dockers.findOne({_id : String(usages[i].endDockerId)});
+                var startZone = await Zones.findOne({_id : String(usages[i].startZoneId)});
+                var endZone = await Zones.findOne({_id : String(usages[i].endZoneId)});
                 var currentUsage = usages[i];
                 resData.push ({
                     currentUsage,
-                    startDocker: startDocker,
-                    endDocker: endDocker
+                    startZone: startZone,
+                    endZone: endZone
                 });
             }
         }

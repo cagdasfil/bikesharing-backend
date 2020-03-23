@@ -208,14 +208,14 @@ module.exports = {
                 var currentTransaction = userTransactions[i];
                 if(currentTransaction.operationType == 'stoppage' || currentTransaction.operationType == 'usage'){
                     var currentUsage = userTransactions[i].details.usage;
-                    var startDocker = await Dockers.findOne({_id : String(currentUsage.startDockerId)});
-                    var endDocker = await Dockers.findOne({_id : String(currentUsage.endDockerId)});
+                    var startZone = await Zones.findOne({_id : String(currentUsage.startZoneId)});
+                    var endZone = await Zones.findOne({_id : String(currentUsage.endZoneId)});
                     resData.push({
                         currentTransaction,
                         currentUsage : {
                             currentUsage,
-                            startDocker,
-                            endDocker
+                            startZone,
+                            endZone
                         }
                     });
                 }

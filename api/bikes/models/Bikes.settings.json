@@ -14,7 +14,8 @@
       "required": true,
       "type": "string"
     },
-    "lastDockerId": {
+    "lastZoneId": {
+      "default": "",
       "required": true,
       "type": "string"
     },
@@ -24,6 +25,7 @@
     },
     "isLocked": {
       "required": true,
+      "default": true,
       "type": "boolean"
     }
   }

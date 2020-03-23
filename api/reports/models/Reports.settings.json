@@ -1,0 +1,46 @@
+{
+  "connection": "default",
+  "collectionName": "reports",
+  "info": {
+    "name": "reports",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "userId": {
+      "required": true,
+      "type": "string"
+    },
+    "userLocation": {
+      "required": true,
+      "type": "json"
+    },
+    "title": {
+      "required": true,
+      "type": "string"
+    },
+    "description": {
+      "required": true,
+      "type": "text"
+    },
+    "image": {
+      "model": "file",
+      "via": "related",
+      "plugin": "upload"
+    },
+    "status": {
+      "required": true,
+      "enum": [
+        "created",
+        "inProgress",
+        "done"
+      ],
+      "type": "enumeration"
+    },
+    "adminComments": {
+      "type": "text"
+    }
+  }
+}

@@ -112,7 +112,7 @@ module.exports = {
 
             var currentPolygon  = zones[i].polygon;
 
-            const currentAvails = await strapi.query('bikes').find({lastDockerId : String(zones[i].id), isAvailable : true});
+            const currentAvails = await strapi.query('bikes').find({lastZoneId : String(zones[i].id), isAvailable : true});
             console.log(currentAvails);
             if(currentAvails.length) centers.push(Turf.centroid(currentPolygon));
         }
@@ -147,7 +147,7 @@ module.exports = {
 
             var currentZone = zones[i];
             var center = Turf.centroid(currentZone.polygon);
-            var currentAvails = await strapi.query('bikes').find({lastDockerId : currentZone.id, isAvailable : true});
+            var currentAvails = await strapi.query('bikes').find({lastZoneId : currentZone.id, isAvailable : true});
             
             zonesWithBikes.push ({
                 currentZone,

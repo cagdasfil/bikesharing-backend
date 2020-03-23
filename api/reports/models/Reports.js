@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Lifecycle callbacks for the `Dockers` model.
+ * Lifecycle callbacks for the `Reports` model.
  */
 
 module.exports = {
