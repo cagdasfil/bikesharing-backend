@@ -194,7 +194,7 @@ module.exports = {
         if(!user){
             const res = {
                 status : 404,
-                errorCode : -231,
+                errorCode : -221,
                 message : 'There is no such a user!'
             };
             return ctx.send(res);
@@ -229,7 +229,7 @@ module.exports = {
         //Return Response
         const res = {
             status : 200,
-            data : userTransactions,
+            data : resData,
             message : 'OK'
         };
         return ctx.send(res);

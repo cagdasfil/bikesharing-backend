@@ -1,0 +1,17 @@
+{
+    "routes": [
+      {
+        "method": "POST",
+        "path": "/application/setAdmin",
+        "handler": "Application.setAdmin"
+        
+      },
+      {
+        "method": "POST",
+        "path": "/application/setAuthenticated",
+        "handler": "Application.setAuthenticated"
+        
+      }
+    ]
+  }
+  
