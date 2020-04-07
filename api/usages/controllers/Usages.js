@@ -7,19 +7,8 @@ module.exports = {
 
     startSession: async ctx => {
 
-        //Check the user has no bike currently
-        const userOpenUsages = await Usages.findOne({userId : ctx.request.body.userId , isOpen : true});
-        if(userOpenUsages){
-            const res = {
-                status : 400,
-                errorCode : -101,
-                message : 'You have already a bike!'
-            }; 
-            return ctx.send(res);
-        }
-
         //Check user
-        const user = await strapi.query('user','users-permissions').findOne({_id : ctx.request.body.userId});
+        const user = ctx.state.user;
         if(!user){
             const res = {
                 status : 404,
@@ -29,9 +18,22 @@ module.exports = {
             return ctx.send(res);
         }
 
+
+        //Check the user has no bike currently
+        const userOpenUsages = await Usages.findOne({userId : user.id, isOpen : true});
+        if(userOpenUsages){
+            const res = {
+                status : 400,
+                errorCode : -101,
+                message : 'You have already a bike!'
+            }; 
+            return ctx.send(res);
+        }
+
+
         //Check user  debt
         if(user.inDebt){
-            const lastPayment = await PaymentServices.lastPayment(String(ctx.request.body.userId));
+            const lastPayment = await PaymentServices.lastPayment(String(user.id));
             const totalDebt = lastPayment.totalFee - lastPayment.totalPaid;
             const res = {
                 status : 400,
@@ -109,6 +111,17 @@ module.exports = {
     
     endSession: async ctx => {
 
+        //Check user
+        const user = ctx.state.user;
+        if(!user){
+            const res = {
+                status : 404,
+                errorCode : -113,
+                message : 'There is no such a user!'
+            };
+            return ctx.send(res);
+        }
+
         //Check user location
         const zones = await Zones.find({"polygon.geometry":{$geoIntersects:{$geometry:{"type" : "Point", "coordinates" : ctx.request.body.location}}}});
         if(!zones.length){
@@ -123,7 +136,7 @@ module.exports = {
         try{
 
             //Update usage record
-            var finishedUsage = await Usages.findOneAndUpdate({userId : String(ctx.request.body.userId) , isOpen : true},{$set: {isOpen : false, endZoneId :  String(zones[0].id)}},{returnOriginal : false});
+            var finishedUsage = await Usages.findOneAndUpdate({userId : String(user.id) , isOpen : true},{$set: {isOpen : false, endZoneId :  String(zones[0].id)}},{returnOriginal : false});
             if(!finishedUsage){
                 const res = {
                     status : 404,
@@ -132,8 +145,6 @@ module.exports = {
                 };
                 return ctx.send(res);
             }
-
-            console.log(finishedUsage);
 
             //Update bike availability 
             await Bikes.updateOne({_id : finishedUsage.bikeId},{$set: {isAvailable : true, lastZoneId : String(zones[0].id)}});
@@ -145,7 +156,6 @@ module.exports = {
             const totalFee = await UsageServices.findTotalFee(timeDifference);
 
             //Check user balance
-            const user = await strapi.query('user','users-permissions').findOne({_id : String(ctx.request.body.userId)});
             var newBalance = user.balance - totalFee;
             var totalPaid = totalFee;
             var inDebt = false;
@@ -157,7 +167,7 @@ module.exports = {
             }
 
             //Update user balance and inDebt field
-            const userAfter = await strapi.query('user','users-permissions').update({_id : String(ctx.request.body.userId)},{$set: {balance : newBalance, inDebt : inDebt}});
+            const userAfter = await strapi.query('user','users-permissions').update({_id : String(user.id)},{$set: {balance : newBalance, inDebt : inDebt}});
 
             //Create transaction fields
             const usageTransaction = {
@@ -176,7 +186,7 @@ module.exports = {
 
             //Create payment fields
             const payment = {
-                userId : String(ctx.request.body.userId),
+                userId : String(user.id),
                 usage : finishedUsage,
                 totalPaid : totalPaid,
                 totalFee : totalFee
