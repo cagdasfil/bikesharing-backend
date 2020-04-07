@@ -3,13 +3,19 @@
       {
         "method": "POST",
         "path": "/application/setAdmin",
-        "handler": "Application.setAdmin"
+        "handler": "Application.setAdmin",
+        "config": {
+          "policies": []
+        }
         
       },
       {
         "method": "POST",
         "path": "/application/setAuthenticated",
-        "handler": "Application.setAuthenticated"
+        "handler": "Application.setAuthenticated",
+        "config": {
+          "policies": []
+        }
         
       }
     ]

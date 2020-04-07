@@ -119,8 +119,6 @@ module.exports = {
             };
             return ctx.send(res);
         }
-
-        console.log(zones[0]);
         
         try{
 
