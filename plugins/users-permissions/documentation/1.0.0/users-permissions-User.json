@@ -197,7 +197,7 @@
         ]
       }
     },
-    "/connect/*": {
+    "/connect/{0}": {
       "get": {
         "deprecated": false,
         "description": "Connect a provider",
@@ -251,7 +251,18 @@
         "tags": [
           "Users-Permissions - User"
         ],
-        "parameters": []
+        "parameters": [
+          {
+            "name": 0,
+            "in": "path",
+            "description": "",
+            "deprecated": false,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
       }
     },
     "/auth/local": {

@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "03/25/2020 9:18:17 PM"
+    "x-generation-date": "04/28/2020 4:11:18 PM"
   },
   "x-strapi-config": {
     "path": "/documentation",
@@ -5706,7 +5706,7 @@
         ]
       }
     },
-    "/connect/*": {
+    "/connect/{0}": {
       "get": {
         "deprecated": false,
         "description": "Connect a provider",
@@ -5760,7 +5760,18 @@
         "tags": [
           "Users-Permissions - User"
         ],
-        "parameters": []
+        "parameters": [
+          {
+            "name": 0,
+            "in": "path",
+            "description": "",
+            "deprecated": false,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
       }
     },
     "/auth/local": {
