@@ -15,7 +15,7 @@ module.exports = {
         if(!user){
             const res = {
                 status : 404,
-                errorCode : -401,
+                errorCode : -501,
                 message : 'There is no such a user!'
             };
             return ctx.send(res);
@@ -25,7 +25,7 @@ module.exports = {
         if(!user.inDebt){
             const res = {
                 status : 400,
-                errorCode : -402,
+                errorCode : -502,
                 message : 'There is no debt for the user!'
             };
             return ctx.send(res);
